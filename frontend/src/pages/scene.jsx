@@ -32,7 +32,7 @@ let mana = 50;
 let glory = 50;
 
 let counter = 0;
-let currentId = 0;
+let currentId = 1;
 let pictures = [];
 
 let nodesArr;
@@ -219,7 +219,8 @@ export class Scene extends React.Component {
     this.state.scene.options.forEach((arr, index) => {
 
       if (index + 1 === choice) {
-        this.moveTo(arr.id);
+        currentId = currentId + 1;
+        this.moveTo(currentId);
         isChanged = true;
       }
 
@@ -228,7 +229,8 @@ export class Scene extends React.Component {
       arr.text.forEach((item) => {
         console.log("item = ", item)
         if (item.toLowerCase() === choice) {
-          this.moveTo(arr.id);
+          currentId = currentId + 1;
+          this.moveTo(currentId);
           isChanged = true;
         }
       })
@@ -259,14 +261,6 @@ export class Scene extends React.Component {
   moveTo(nextId) {
     //fetchedData(nextId)
     counter++;
-
-    if ((lives <= 0 || mana <= 0 || glory <= 0) && this.state.scene.id != YOUDIED ) {
-      nextId = YOUDIED;
-    }
-
-    if ((lives > 0 && (mana >= 200 || glory >= 200)) && this.state.scene.id != YOUWIN ) {
-      nextId = YOUWIN;
-    }
 
     console.log('NEXT IS ', nextId);
     console.log('ARRAY = ', curNodes);
@@ -317,11 +311,11 @@ export class Scene extends React.Component {
       .then((response) => {
         const { data } = response;
         //setScene(data);
-        if (data.bonus) {
-          lives += data.bonus.lives;
-          mana += data.bonus.mana;
-          glory += data.bonus.glory;
-        }
+        //if (data.bonus) {
+          //lives += data.bonus.lives;
+         // mana += data.bonus.mana;
+         // glory += data.bonus.glory;
+       // }
 
         this.setState({ scene: data , character : characterID});
         this.newScene();
