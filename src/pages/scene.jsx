@@ -1,31 +1,24 @@
-import {TaskList} from '../pages/TaskList';
 import getScene, { API_URL } from '../services/APIHelper.js'
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import {
   createSmartappDebugger,
   createAssistant,
 } from "@sberdevices/assistant-client";
 
-import { darkSber } from '@sberdevices/plasma-tokens/themes';
 import { Button } from '@sberdevices/ui/components/Button/Button';
-import { Container, Row, Col } from '@sberdevices/plasma-ui/components/Grid';
-import { Image } from '@sberdevices/ui/components/Image/Image';
+import { Row, Col } from '@sberdevices/plasma-ui/components/Grid';
 import { Spinner } from '@sberdevices/plasma-ui/components/Spinner'
-import { Headline1 } from '@sberdevices/plasma-ui';
 
-import Indicators from './indicators'
 import './scene.css';
-import './centerButtons.css'
-import './centerText.css'
-import './centerPic.css'
-import './sthg.css'
-import './startText.css'
-import './marginIndicators.css'
-import './buttonText.css'
-import './lastBut.css'
-import './centerSpinner.css'
-import { createMethodSignature } from 'typescript';
+import '../components/centerButtons.css'
+import '../components/centerText.css'
+import '../components/centerPic.css'
+import '../components/sthg.css'
+import '../components/startText.css'
+import '../components/buttonText.css'
+import '../components/lastBut.css'
+import '../components/centerSpinner.css'
 
 const YOUDIED = 99999;
 const YOUWIN = 100000;
@@ -247,20 +240,6 @@ export class Scene extends React.Component {
     //return this.state;
   }
 
-  /*add_note (action) {
-    console.log('add_note', action);
-    this.setState({
-      notes: [
-        ...this.state.notes,
-        {
-          id:        Math.random().toString(36).substring(7),
-          title:     action.note,
-          completed: false,
-        },
-      ],
-    })
-  }*/
-
   setBackgrounds (curImg) {
     pictures.push(curImg);
     //debugger;
@@ -370,25 +349,6 @@ export class Scene extends React.Component {
   }
 
   render() {
-
-    /*
-    const [scene, setScene] = useState(null);
-    const [scene, setScene] = useState(null);
-
-    const [backgroundImage, setBackgroundImage] = useState({background : ''});
-
-    const fetchedData = async (id) => {
-       return await getScene(id);
-    }
-    
-    useEffect(() => {
-       fetchedData(currentId).then((response) => {
-           console.log(response);
-           const { data } = response;
-           setScene(data);
-       })
-    }, []);
-    */
     
     const { scene, backgroundImage } = this.state;
     console.log("SCENE ", scene);
@@ -450,7 +410,6 @@ export class Scene extends React.Component {
                 </Col>
                 <Col className = 'centerBut' type="rel" offsetS={0} offsetM={0} offsetL={1} offsetXL={0} sizeS={4} sizeM={3} sizeL={3} sizeXL={6}>
                   <h1 className='centerText'> { this.neededText(scene) } </h1>
-                  <Indicators lives={lives} mana={mana} glory={glory} />
                   {
                     scene.options.map((item) => {
                       return (

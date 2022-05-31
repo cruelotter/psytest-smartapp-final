@@ -6,8 +6,7 @@ import {
 import { Container } from '@sberdevices/plasma-ui/components/Grid';
 
 import "./App.css";
-import Scene from './components/scene';
-import { TaskList } from './pages/TaskList';
+import Scene from './pages/scene';
 
 
 
