@@ -120,6 +120,7 @@ export class Scene extends React.Component {
   }
 
   dispatchAssistantAction (action) {
+    console.log('АССИСТЕНТ')
     console.log('dispatchAssistantAction', action);
     if (action) {
       switch (action.type) {
