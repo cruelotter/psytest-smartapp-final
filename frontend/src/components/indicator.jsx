@@ -14,10 +14,7 @@ class Indicators extends React.Component {
     render() {
         return (
             <Row className = 'centerInd'>
-                <div className='indWrapper'> <Toast  text={`Вопрос:: ${this.props.num}/${this.props.total}`} /> </div>
-                <div className='indWrapper'> <Toast  text={`Нейротизм: ${this.props.lives}`} /> </div>
-                <div className='indWrapper'> <Toast  text={`Экстраверсия: ${this.props.mana}`} /> </div>
-                <div className='indWrapper'> <Toast  text={`Ложь: ${this.props.glory}`} /> </div>
+                <div className='indWrapper'> <Toast  text={`Вопрос: ${this.props.n}/56`} /> </div>
             </Row>
         );
     }

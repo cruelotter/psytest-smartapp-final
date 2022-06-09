@@ -1,3 +1,36 @@
+.inline{
+    display: inline;
+    margin-left: 5%;
+    margin-left: 5%;
+    margin-top: 5%;
+    margin-bottom: 10%;
+}
+.inline-content{
+    width: 60%;
+    alignment: center;
+    float:left;
+}
+.chart{
+    float: right;
+    alignment: right;
+}
+
+.incol{
+    margin-left: 5%;
+    margin-left: 5%;
+    margin-top: 5%;
+    margin-bottom: 15%;
+}
+.incol-content{
+    position: center;
+}
+.incol-chart{
+    position: center;
+    margin-top: 15px;
+
+}
+
+
 .img-Wrapper {
     background-size: contain !important;
     margin-left: 0%;

@@ -12,6 +12,7 @@ import { Spinner } from '@sberdevices/plasma-ui/components/Spinner'
 
 import Indicators from '../components/indicator'
 import './scene.css';
+import '../components/Chart.jsx';
 import '../components/centerButtons.css'
 import '../components/centerText.css'
 import '../components/centerPic.css'
@@ -20,21 +21,11 @@ import '../components/startText.css'
 import '../components/buttonText.css'
 import '../components/lastBut.css'
 import '../components/centerSpinner.css'
+import { PsyTestChart } from '../components/Chart.jsx';
+import ProgressBar from "../components/ProgressBar";
+
 
 let characterID;
-
-let firstRepeat = false;
-
-let e = 0;
-let l = 0;
-let n = 0;
-
-let counter = 0
-let currentId = 1;
-let pictures = [];
-
-let nodesArr;
-let curNodes;
 
 const setBackground = {
   backgroundImage: ''
@@ -62,43 +53,28 @@ export class Scene extends React.Component {
     console.log('constructor');
 
     this.state = {
-      notes: [],
-      scene:           null,
-      backgroundImage: { background: '' }
+      id: 0,
+      e: 0,
+      l: 0,
+      n: 0,
+      question: {},
+      intro: false,
+      done: false
     };
 
     this.assistant = initializeAssistant(() => this.getStateForAssistant() );
-    this.assistant.on("data", (event/*: any*/) => {
-      switch (event.type) {
-        case 'character':
-          characterID = event.character.id;
-          this.setState({scene: this.state.scene, character: characterID});
-          console.log("CHARACTER= ", characterID);
+    
+    this.assistant.on('start', () => {
+      console.log('SmartApp started');
+    });
+
+    this.assistant.on('data', data => {
+      console.log(data);
+      if (data.type == 'smart_app_data') {
+        this.state = data.smart_app_data;
+        this.setState({scene: this.state});
       }
-      console.log(`assistant.on(data)`, event);
-      const { action } = event
-      this.dispatchAssistantAction(action);
     });
-    this.assistant.on("start", (event) => {
-      console.log(`assistant.on(start)`, event);
-    });
-
-  }
-
-  async componentDidMount() {
-    console.log('componentDidMount');
-    const response = await getScene(currentId);
-    console.log(response);
-    const { data } = response;
-
-    if (data.nodesArr) {
-      nodesArr = data.nodesArr.slice(0, data.nodesArr.length);
-      console.log('nodesArr', nodesArr);
-      curNodes = nodesArr.slice(0, nodesArr.length);
-    }
-
-    this.setState({ scene: data , character : characterID});
-    this.read();
   }
 
   getStateForAssistant () {
@@ -119,163 +95,56 @@ export class Scene extends React.Component {
     return state;
   }
 
-  dispatchAssistantAction (action) {
-    console.log('АССИСТЕНТ')
-    console.log('dispatchAssistantAction', action);
-    if (action) {
-      switch (action.type) {
-        case 'add_note':
-          console.log('add_note', action, 'action.choice = ', action.choice);
-          return this.add_note(action);
-
-        
-        case 'read':
-          return this.read();
-
-        case 'newScene':
-          return this.newScene();
-      }
-    }
-  }
-
-  exit () {
-    this.assistant.close();
-  }
-
-  read () {
-    this.assistant.sendData( { action : { action_id : 'read' } } );
-  }
-
-  newScene () {
-    this.assistant.sendData( { action : { action_id : 'newScene' } } );
-  }
-
-  sendException() {
-    this.assistant.sendData( { action : { action_id : 'noMatch' } } );
-  }
-
-  add_note (action) {
-    let choice = action.choice;
-    let isChanged = false;
-
-    choice = choice.toLowerCase();
-    
-
-    if (this.state.scene.options[1]) {
-      if (this.state.scene.options[1].text.includes('выйти') && this.state.scene.options[1].text.includes(choice.toLowerCase())) {
-        console.log("EXIT")
-        this.exit();
-      }
-    }
-
-    if (choice == 'да' || choice == 'один' || choice == 'первый' || choice == 'первое' || choice == 'первую') {
-      choice = 1;
-      e = e + Number(typeof this.state.scene.options[0].koe.e == 'undefined'? '0' : this.state.scene.options[0].koe.e);
-      l = l + Number(typeof this.state.scene.options[0].koe.l == 'undefined'? '0' : this.state.scene.options[0].koe.l);
-      n = n + Number(typeof this.state.scene.options[0].koe.n == 'undefined'? '0' : this.state.scene.options[0].koe.n);
-    }
-    if (choice == 'нет' || action.choice == 'два' || choice == 'второй'|| choice == 'второе' || choice == 'вторую') {
-      choice = 2;
-      e = e + Number(typeof this.state.scene.options[0].koe.e == 'undefined'? '0' : this.state.scene.options[0].koe.e);
-      l = l + Number(typeof this.state.scene.options[0].koe.l == 'undefined'? '0' : this.state.scene.options[0].koe.l);
-      n = n + Number(typeof this.state.scene.options[0].koe.n == 'undefined'? '0' : this.state.scene.options[0].koe.n);
-    }
-    if (choice == 'возможно' || action.choice == 'три' || choice == 'третий'|| choice == 'третье' || choice == 'третью') {
-      choice = 3;
-      e = e + Number(typeof this.state.scene.options[0].koe.e == 'undefined'? '0' : this.state.scene.options[0].koe.e);
-      l = l + Number(typeof this.state.scene.options[0].koe.l == 'undefined'? '0' : this.state.scene.options[0].koe.l);
-      n = n + Number(typeof this.state.scene.options[0].koe.n == 'undefined'? '0' : this.state.scene.options[0].koe.n);
-    }
-
-    currentId = currentId + 1;
-    this.state.scene.options.forEach((arr, index) => {
-      this.moveTo(currentId);
-      isChanged = true;
-    })
-
-    if (!isChanged) {
-      this.sendException();
-    }
-    //return this.state;
-  }
-
-  setBackgrounds (curImg) {
-    pictures.push(curImg);
-    //debugger;
-    let string = ``;
-    pictures.reverse();
-    pictures.forEach((pic, index) => {
-      string = string + `url(${API_URL}/${pic}.png) center no-repeat`;
-      if (index < pictures.length - 1){
-        string = string + ',';
+  handleClick(n) {
+    console.log("send data")
+    console.log(n);
+    this.assistant.sendData({
+      action: {
+        action_id: 'click',
+        data: n
       }
     });
-    //setBackgroundImage({background : string});
-    this.setState({ backgroundImage: {background : string}, character: characterID})
-    pictures.reverse();
-  }
-  
-  moveTo(nextId) {
-    //fetchedData(nextId)
-    counter++;
-
-    console.log('NEXT IS ', nextId);
-    console.log('ARRAY = ', curNodes);
-
-    if (!nextId) {
-
-    }
-
-    if ((nextId == 1) && this.state.scene.id > 1) {
-      setBackground.backgroundImage = '';
-      curNodes = nodesArr.slice(0, nodesArr.length);
-    }
-
-    getScene(nextId)
-      .then((response) => {
-        const { data } = response;
-
-        this.setState({ scene: data , character : characterID});
-        this.newScene();
-
-        console.log('COUNTER = ', counter);
-
-        if (counter > 0 && data.img) {
-          this.setBackgrounds(data.img);
-        } 
-      });
   }
 
-  neededText(scene) {
-    if (scene.text) {
-      return scene.text;
+  push(action) {
+    if (action.choice == 'Начать') {
+      this.handleClick(0);
     }
-    if (characterID === 'joy'){
-      return scene.textj;
+
+    if (action.choice == 'Выход') {
+      this.handleClick(-1);
     }
-    if (characterID === 'eva'){
-      return scene.texta;
+
+    if (action.choice == 'Да') {
+      this.handleClick(0);
     }
-    return scene.texts;
+
+    if (action.choice == 'Нет') {
+      this.handleClick(1);
+    }
+
+    if (action.choice == 'Возможно') {
+      this.handleClick(2);
+    }
   }
+
 
   render() {
     
     const { scene, backgroundImage } = this.state;
     console.log("SCENE ", scene);
     if (scene) {
-      if (scene.options) {
-
-        if (counter == 0) {
-          return (
-            < >
+      if (scene.intro) {
+        return(
+          <>
+              < >
               <Col type="calc" offsetS={1} offsetM={2} offsetL={3} offsetXL={4} sizeS={1} sizeM={2} sizeL={3} sizeXL={4} />
-              <h1 className='textWrapper'> { this.neededText(scene) } </h1>
+              <h1 className='textWrapper'> { scene.question.texts } </h1>
               {
-                scene.options.map((item) => {
+                scene.question.options.map((item) => {
                   return (
                     <Row>
-                      <Button scaleOnInteraction = {false} scaleOnHover = {false} scaleOnPress = {false} style={{ marginBottom: '5rem', width: '100%' }} stretch={true} size="l" onClick={ () => this.add_note({choice: item.text[0]}) }>
+                      <Button scaleOnInteraction = {false} scaleOnHover = {false} scaleOnPress = {false} style={{ marginBottom: '12px', width: '100%' }} stretch={true} size="l" onClick={ () => this.push({choice: item.text[0]}) }>
                       <div className='butTextWrapper'> {item.text[0]} </div>
                       </Button>
                     </Row>
@@ -283,46 +152,79 @@ export class Scene extends React.Component {
                 })
               }
             </>
-          );
-        }
-
-        if (currentId == 56) {
-          return (
-            < >
-              <Col type="calc" offsetS={1} offsetM={2} offsetL={3} offsetXL={4} sizeS={1} sizeM={2} sizeL={3} sizeXL={4} />
-              <h1 className='textWrapper'> { 'Вы победили! ' } </h1>
-              <Button scaleOnInteraction = {false} scaleOnHover = {false} scaleOnPress = {false} style={{ marginBottom: '5rem', width: '100%' }} stretch={true} size="l" onClick={ () => this.add_note({choice: 'выйти'}) }>
-                <div className='butTextWrapper'> {'Выход'} </div>
-              </Button>
-            </>
-          );
-        }
-
-        return(
-          <>
-              <Row className='rowWrapper'>
-                <Col sizeS={4} sizeM={3} sizeL={4} sizeXL={6} className='centerPic'>
-                  <div style={backgroundImage} className = 'img-Wrapper'>
-                  </div>
-                </Col>
-                <Col className = 'centerBut' type="rel" offsetS={0} offsetM={0} offsetL={1} offsetXL={0} sizeS={4} sizeM={3} sizeL={3} sizeXL={6}>
-                  <h1 className='centerText'> { this.neededText(scene) } </h1>
-                  <Indicators total={56} num={currentId} lives={e} mana={l} glory={n} />
-                  {
-                    scene.options.map((item) => {
-                      return (
-                        <Row type="rel" sizeS={4} sizeM={6} sizeL={6} sizeXL={6}>
-                          <Button key={item.id} scaleOnInteraction = {false} scaleOnHover = {false} scaleOnPress = {false} style={{ marginBottom: '12px', width: '100%' }} stretch={true} size="s" onClick={ () => this.add_note({choice: item.text[0]}) }>
-                            <div className='butTextWrapper'> {item.text[0]} </div>
-                          </Button>
-                        </Row>
-                      );
-                    })
-                  }
-                  </Col>
-              </Row>
             </>
         );
+      } else if (scene.done) {
+        return(
+          <>
+            <Row className='rowWrapper'>
+              <Col className='centerPic'>
+                <img src={'/images/6.png'} width={400}/>
+              </Col>
+              <Col className = 'results' type="rel" sizeS={4} sizeM={3} sizeL={3} sizeXL={6}>
+                <h1 className='result-h'>{'Вы - Флегматик'}</h1>
+                <p className='result-p'>Для флегматика характерна высокая активность, которая доминирует над низкой реактивностью. Он малочувствителен и мало эмоционален. Внешние раздражители оказывают на него очень слабое воздействие; способен оставаться хладнокровным в непредвиденных ситуациях. Также у флегматиков замедленные и не выразительные движения, такая же речь, не богатая мимика. Внимание переключает с затруднениями, привычки и навыки перестраивает очень медленно, однако он обладает энергичностью и высокой работоспособностью. Большинство флегматиков — интроверты."</p>
+              </Col>
+            </Row>
+            </>
+        );
+      } else {
+        if (document.documentElement.clientWidth>=1.3*document.documentElement.clientHeight){
+          return (
+              <Row className="inline">
+                <Col className="inline-content" type="rel">
+                  <ProgressBar key={scene.id} completed={Math.round(scene.id/57*100)}/>
+                  <h1 className='centerText'> {scene.question.texts} </h1>
+                  {
+                    scene.question.options.map((item) => {
+                      return (
+                          <Row type="rel" sizeS={4} sizeM={6} sizeL={6} sizeXL={6}>
+                            <Button key={item.id}
+                                    scaleOnInteraction={false}
+                                    scaleOnHover={false}
+                                    scaleOnPress={false}
+                                    style={{marginBottom: '12px', width: '100%'}}
+                                    stretch={true} size="s"
+                                    onClick={() => this.push({choice: item.text[0]})}>
+                              <div className='butTextWrapper'> {item.text[0]} </div>
+                            </Button>
+                          </Row>);
+                    })
+                  }
+                </Col>
+                <Col className="chart" type="rel">
+                  {PsyTestChart(scene.l, scene.e, 400)}
+                </Col>
+              </Row>
+          );
+        } else {
+          return (
+              <div className="incol" >
+                <div className="incol-content">
+                  <ProgressBar key={scene.id} completed={Math.round(scene.id/57*100)}/>
+                  <h1 className='centerText'> {scene.question.texts } </h1>
+                  {
+                    scene.question.options.map((item) => {
+                      return (
+                          <Row type="rel" sizeS={4} sizeM={6} sizeL={6} sizeXL={6}>
+                            <Button key={item.id}
+                                    scaleOnInteraction = {false}
+                                    scaleOnHover = {false} scaleOnPress = {false}
+                                    style={{ marginBottom: '12px', width: '100%' }}
+                                    stretch={true} size="s"
+                                    onClick={ () => this.push({choice: item.text[0]}) }>
+                              <div className='butTextWrapper'> {item.text[0]} </div>
+                            </Button>
+                          </Row>);
+                    })
+                  }
+                </div>
+                <div className="incol-chart">
+                  {PsyTestChart(scene.l, scene.e, 300)}
+                </div>
+              </div>
+          );
+        }
       }
     } else {
       return (<Spinner className='spinnerWrapper'/>);
