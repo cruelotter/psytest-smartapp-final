@@ -159,7 +159,7 @@ export class Scene extends React.Component {
           <>
             <Row className='rowWrapper'>
               <Col className='centerPic'>
-                <img src={'/images/6.png'} width={400}/>
+                <img src={'/images/melancholic.svg'} width={400}/>
               </Col>
               <Col className = 'results' type="rel" sizeS={4} sizeM={3} sizeL={3} sizeXL={6}>
                 <h1 className='result-h'>{'Вы - Флегматик'}</h1>
