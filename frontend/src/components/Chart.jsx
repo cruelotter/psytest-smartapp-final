@@ -24,7 +24,7 @@ export const PsyTestChart = (n, e, size) => {
             <CartesianGrid stroke="#606060" strokeDasharray="5 5"/>
             <Tooltip />
             <ReferenceLine x={12} stroke="#c5c5c5"
-                           label={{value:"Стабильный", position:"insideTop", dy:-25}}
+                           label={{value:"Нестабильный", position:"insideTop", dy:-25}}
             />
             <ReferenceLine y={12} stroke="gray"
                            label={{value:"Экстраверт", position:"right", angle:-90, dx:10, dy:40}}
@@ -37,7 +37,7 @@ export const PsyTestChart = (n, e, size) => {
                 name="Экстраверсия"
                 axisLine={false}
                 tickCount={7}
-                label={{value:"Нестабильный", position:"bottom"}}
+                label={{value:"Стабильный", position:"bottom"}}
             />
 
             <YAxis
