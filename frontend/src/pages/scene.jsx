@@ -58,6 +58,12 @@ export class Scene extends React.Component {
       l: 0,
       n: 0,
       question: {},
+      type: {
+        id: -1,
+        name: "",
+        img: "",
+        description: ""
+      },
       intro: false,
       done: false
     };
@@ -159,11 +165,11 @@ export class Scene extends React.Component {
           <>
             <Row className='rowWrapper'>
               <Col className='centerPic'>
-                <img src={'/images/melancholic.svg'} width={400}/>
+                <img src={'/images/'+ scene.type.img} width={400}/>
               </Col>
               <Col className = 'results' type="rel" sizeS={4} sizeM={3} sizeL={3} sizeXL={6}>
-                <h1 className='result-h'>{'Вы - Флегматик'}</h1>
-                <p className='result-p'>Для флегматика характерна высокая активность, которая доминирует над низкой реактивностью. Он малочувствителен и мало эмоционален. Внешние раздражители оказывают на него очень слабое воздействие; способен оставаться хладнокровным в непредвиденных ситуациях. Также у флегматиков замедленные и не выразительные движения, такая же речь, не богатая мимика. Внимание переключает с затруднениями, привычки и навыки перестраивает очень медленно, однако он обладает энергичностью и высокой работоспособностью. Большинство флегматиков — интроверты."</p>
+                <h1 className='result-h'>{'Вы - '+ scene.type.name}</h1>
+                <p className='result-p'>{scene.type.description}</p>
               </Col>
             </Row>
             </>
@@ -182,8 +188,7 @@ export class Scene extends React.Component {
                             <Button key={item.id}
                                     scaleOnInteraction={false}
                                     scaleOnHover={false}
-                                    scaleOnPress={false}
-                                    style={{marginBottom: '12px', width: '100%'}}
+                                    scaleOnPress={false}                                    style={{marginBottom: '12px', width: '100%'}}
                                     stretch={true} size="s"
                                     onClick={() => this.push({choice: item.text[0]})}>
                               <div className='butTextWrapper'> {item.text[0]} </div>
@@ -193,7 +198,7 @@ export class Scene extends React.Component {
                   }
                 </Col>
                 <Col className="chart" type="rel">
-                  {PsyTestChart(scene.l, scene.e, 400)}
+                  {PsyTestChart(scene.n, scene.e, 400)}
                 </Col>
               </Row>
           );
@@ -220,7 +225,7 @@ export class Scene extends React.Component {
                   }
                 </div>
                 <div className="incol-chart">
-                  {PsyTestChart(scene.l, scene.e, 300)}
+                  {PsyTestChart(scene.n, scene.e, 300)}
                 </div>
               </div>
           );

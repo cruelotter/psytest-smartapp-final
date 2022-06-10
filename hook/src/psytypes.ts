@@ -1,4 +1,4 @@
-const psytypes=[
+export const psytypes=[
     {
         id: 0, // neuro<12; extra<12
         img: "phlegmatic.svg",
